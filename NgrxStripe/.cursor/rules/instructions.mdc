@@ -1,0 +1,37 @@
+---
+alwaysApply: true
+---
+
+## Project explanation
+
+This is a Angular 21 project I use for learning to integrate Stripe in my applications.
+
+## Context
+
+This application fetch FAKE data from a .NET API.
+
+Data are 'products', following this model :
+
+{
+id: number,
+name: string,
+price: number,
+description?: string
+}
+
+You can also log in by giving a email and password.
+
+## Goal
+
+The goal is to add Stripe to the application and succefull complete orders.
+
+The back end wait for something like :
+
+{
+userId: number,
+productIds: []number
+}
+
+## IMPORTANT
+
+- Work only in the features folder

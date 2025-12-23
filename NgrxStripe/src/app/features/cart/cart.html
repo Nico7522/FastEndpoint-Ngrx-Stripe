@@ -1,0 +1,178 @@
+<div class="bg-neutral-50">
+  <main class="max-w-5xl mx-auto px-6 py-10">
+    <h1 class="text-2xl font-medium text-neutral-900 mb-8">Votre panier</h1>
+
+    <!-- Payment Success Message -->
+    @if (paymentSuccess$ | async) {
+    <div class="text-center py-20">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
+        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <h2 class="text-xl font-medium text-neutral-900 mb-2">Paiement réussi !</h2>
+      <p class="text-neutral-500 mb-6">Merci pour votre commande. Vous recevrez un email de confirmation.</p>
+      <a routerLink="/products"
+        class="inline-block px-6 py-3 bg-neutral-900 text-white text-sm font-medium hover:bg-neutral-800">
+        Continuer vos achats
+      </a>
+    </div>
+    } @else {
+
+    @if (cartItems$ | async; as cartItems) {
+    @if (cartItems.length > 0) {
+    <div class="grid lg:grid-cols-3 gap-10">
+      <!-- Liste des produits -->
+      <div class="lg:col-span-2">
+        <div class="border border-neutral-200 bg-white">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-neutral-200 text-neutral-500 text-xs uppercase tracking-wider">
+                <th class="text-left py-3 px-4 font-medium">Produit</th>
+                <th class="text-right py-3 px-4 font-medium">Prix</th>
+                <th class="text-center py-3 px-4 font-medium">Qté</th>
+                <th class="text-right py-3 px-4 font-medium">Total</th>
+                <th class="py-3 px-4"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-100">
+              @for (item of cartItems; track item.product.id) {
+              <tr>
+                <td class="py-4 px-4">
+                  <span class="text-neutral-900">{{ item.product.name }}</span>
+                  @if (item.product.description) {
+                  <p class="text-neutral-400 text-xs mt-0.5">{{ item.product.description }}</p>
+                  }
+                </td>
+                <td class="py-4 px-4 text-right text-neutral-600">
+                  {{ item.product.price | currency:'EUR':'symbol':'1.2-2' }}
+                </td>
+                <td class="py-4 px-4 text-center text-neutral-900">
+                  {{ item.quantity }}
+                </td>
+                <td class="py-4 px-4 text-right text-neutral-900 font-medium">
+                  {{ item.subtotal | currency:'EUR':'symbol':'1.2-2' }}
+                </td>
+                <td class="py-4 px-4 text-right">
+                  <button (click)="removeFromCart(item.product.id)"
+                    class="text-neutral-400 hover:text-neutral-800 text-xs" title="Supprimer">
+                    Supprimer
+                  </button>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-4 text-right">
+          <button (click)="clearCart()" class="text-xs text-neutral-500 hover:text-neutral-800 underline">
+            Vider le panier
+          </button>
+        </div>
+      </div>
+
+      <!-- Résumé & Paiement -->
+      <div class="lg:col-span-1">
+        <div class="border border-neutral-200 bg-white p-6">
+          <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Résumé</h2>
+
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between text-neutral-600">
+              <span>Articles</span>
+              <span>{{ cartQuantity$ | async }}</span>
+            </div>
+            <div class="flex justify-between text-neutral-600">
+              <span>Sous-total</span>
+              <span>{{ cartTotal$ | async | currency:'EUR':'symbol':'1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between text-neutral-600">
+              <span>Livraison</span>
+              <span>Gratuite</span>
+            </div>
+          </div>
+
+          <div class="border-t border-neutral-200 mt-4 pt-4">
+            <div class="flex justify-between text-neutral-900 font-medium">
+              <span>Total</span>
+              <span>{{ cartTotal$ | async | currency:'EUR':'symbol':'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          @if (error$ | async; as error) {
+          <div class="mt-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded">
+            {{ error }}
+          </div>
+          }
+
+          <!-- Stripe Payment Form -->
+          @if (clientSecret$ | async; as clientSecret) {
+          <div class="mt-6">
+            <h3 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Informations de paiement</h3>
+
+            <ngx-stripe-elements [stripe]="stripe" [elementsOptions]="elementsOptions()">
+              <ngx-stripe-payment [options]="{ layout: 'tabs' }" />
+            </ngx-stripe-elements>
+
+            <div class="flex gap-3 mt-6">
+              <button (click)="cancelCheckout()"
+                class="flex-1 py-3 border border-neutral-300 text-neutral-700 text-sm font-medium hover:bg-neutral-50"
+                [disabled]="isProcessing$ | async">
+                Annuler
+              </button>
+              <button (click)="confirmPayment()"
+                class="flex-1 py-3 bg-neutral-900 text-white text-sm font-medium hover:bg-neutral-800 disabled:bg-neutral-400 disabled:cursor-not-allowed"
+                [disabled]="isProcessing$ | async">
+                @if (isProcessing$ | async) {
+                <span class="inline-flex items-center gap-2">
+                  <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                  </svg>
+                  Traitement...
+                </span>
+                } @else {
+                Payer
+                }
+              </button>
+            </div>
+          </div>
+          } @else {
+          <button (click)="checkout()"
+            class="w-full mt-6 py-3 bg-neutral-900 text-white text-sm font-medium hover:bg-neutral-800 disabled:bg-neutral-400 disabled:cursor-not-allowed"
+            [disabled]="isProcessing$ | async">
+            @if (isProcessing$ | async) {
+            <span class="inline-flex items-center gap-2">
+              <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+              </svg>
+              Chargement...
+            </span>
+            } @else {
+            Commander
+            }
+          </button>
+          }
+        </div>
+      </div>
+    </div>
+    } @else {
+    <!-- Panier vide -->
+    <div class="text-center py-20">
+      <p class="text-neutral-400 mb-6">Votre panier est vide</p>
+      <a routerLink="/products"
+        class="inline-block px-6 py-3 bg-neutral-900 text-white text-sm font-medium hover:bg-neutral-800">
+        Voir les produits
+      </a>
+    </div>
+    }
+    }
+    }
+  </main>
+</div>

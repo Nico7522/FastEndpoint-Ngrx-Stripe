@@ -1,0 +1,47 @@
+<div class="bg-neutral-50">
+  <main class="max-w-6xl mx-auto px-6 py-10">
+    <!-- Error -->
+    @if (errors$ | async; as error) {
+    <div class="text-center py-20">
+      <p class="text-red-600 text-sm mb-4">Une erreur est survenue lors du chargement des produits.</p>
+      <button (click)="reload()" class="text-xs text-neutral-600 hover:text-neutral-900 underline">
+        Réessayer
+      </button>
+    </div>
+    } @else if (loading$ | async) {
+    <!-- Loading -->
+    <div class="text-center py-20">
+      <p class="text-neutral-400 text-sm">Chargement...</p>
+    </div>
+    } @else {
+    @if (products$ | async; as products) {
+    @if (products.length === 0) {
+    <div class="text-center py-20">
+      <p class="text-neutral-400">Aucun produit disponible</p>
+    </div>
+    } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      @for (product of products; track product.id) {
+      <article class="group">
+        <div class="aspect-4/3 bg-neutral-100 mb-4 overflow-hidden">
+          <img priority ngSrc="placeholder.jpg" [alt]="product.name" width="1024" height="820"
+            class="w-full h-full object-cover" />
+        </div>
+        <div class="flex justify-between items-start gap-4">
+          <div class="min-w-0">
+            <h2 class="text-sm font-medium text-neutral-900 truncate">{{ product.name }}</h2>
+            <p class="text-sm text-neutral-500 mt-1">{{ product.price | currency:'EUR':'symbol':'1.2-2' }}</p>
+          </div>
+          <button (click)="addToCart(product)"
+            class="cursor-pointer shrink-0 text-xs text-neutral-600 hover:text-neutral-900 underline">
+            Ajouter
+          </button>
+        </div>
+      </article>
+      }
+    </div>
+    }
+    }
+    }
+  </main>
+</div>

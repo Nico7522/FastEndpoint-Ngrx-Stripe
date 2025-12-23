@@ -1,0 +1,41 @@
+<header class="bg-white border-b border-neutral-200">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <!-- Logo -->
+    <a routerLink="/products" class="text-lg font-medium text-neutral-900">
+      Boutique
+    </a>
+
+    <!-- Navigation -->
+    <nav class="flex items-center gap-6">
+      <a routerLink="/products" routerLinkActive="text-neutral-900"
+        class="text-sm text-neutral-500 hover:text-neutral-900">
+        Produits
+      </a>
+
+      <!-- Panier -->
+      @if (isLoggedIn$ | async) {
+      <a routerLink="/cart" class="flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-900">
+        <span>Panier</span>
+        @if (cartQuantity$ | async; as quantity) {
+        @if (quantity > 0) {
+        <span class="bg-neutral-900 text-white text-xs px-2 py-0.5 rounded-full">{{ quantity }}</span>
+        }
+        }
+      </a>
+      }
+
+      <!-- Login / Account -->
+      @if (isLoggedIn$ | async) {
+      <a routerLink="/account" class="text-sm text-neutral-500 hover:text-neutral-900">
+        Mon compte
+      </a>
+      <button class="cursor-pointer text-sm text-neutral-500 hover:text-neutral-900"
+        (click)="onLogout()">Déconnexion</button>
+      } @else {
+      <a routerLink="/login" class="text-sm text-neutral-500 hover:text-neutral-900">
+        Connexion
+      </a>
+      }
+    </nav>
+  </div>
+</header>
