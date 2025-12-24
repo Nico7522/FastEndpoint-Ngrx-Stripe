@@ -16,6 +16,13 @@
                 <input type="email" id="email" formControlName="email" name="email" required
                     class="w-full px-3 py-2 border border-neutral-200 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-400"
                     placeholder="vous@exemple.com" />
+                @if (email?.invalid && email?.touched) {
+                @if (email?.errors?.['required']) {
+                <p class="text-red-500 text-xs mt-1">L'email est requis</p>
+                } @else if (email?.errors?.['email']) {
+                <p class="text-red-500 text-xs mt-1">L'email n'est pas valide</p>
+                }
+                }
             </div>
 
             <!-- Mot de passe -->
@@ -26,12 +33,13 @@
                 <input type="password" id="password" formControlName="password" name="password" required
                     class="w-full px-3 py-2 border border-neutral-200 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-400"
                     placeholder="••••••••" />
+                @if (password?.invalid && password?.touched) {
+                @if (password?.errors?.['required']) {
+                <p class="text-red-500 text-xs mt-1">Le mot de passe est requis</p>
+                }
+                }
             </div>
 
-            <!-- Message d'erreur -->
-            @if (error$ | async; as error) {
-            <p class="text-red-600 text-sm mb-4">{{ error }}</p>
-            }
 
             <!-- Bouton -->
             <button type="submit" [disabled]="(isLoading$ | async) || !form.valid"

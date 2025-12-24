@@ -1,0 +1,102 @@
+<div class="min-h-screen bg-neutral-50 flex items-center justify-center px-4">
+    <div class="w-full max-w-sm">
+        <!-- Logo / Titre -->
+        <div class="text-center mb-8">
+            <h1 class="text-xl font-medium text-neutral-900">Boutique</h1>
+            <p class="text-sm text-neutral-500 mt-1">Créez votre compte</p>
+        </div>
+
+        <!-- Formulaire -->
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="bg-white border border-neutral-200 p-6">
+            <!-- Nom d'utilisateur -->
+            <div class="mb-4">
+                <label for="username" class="block text-xs text-neutral-500 uppercase tracking-wider mb-2">
+                    Nom d'utilisateur
+                </label>
+                <input type="text" id="username" formControlName="username" name="username"
+                    class="w-full px-3 py-2 border border-neutral-200 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-400"
+                    [class.border-red-400]="username?.invalid && username?.touched" placeholder="johndoe" />
+                @if (username?.invalid && username?.touched) {
+                @if (username?.errors?.['required']) {
+                <p class="text-red-500 text-xs mt-1">Le nom d'utilisateur est requis</p>
+                } @else if (username?.errors?.['minlength']) {
+                <p class="text-red-500 text-xs mt-1">Le nom d'utilisateur doit contenir au moins 3 caractères</p>
+                }
+                }
+            </div>
+
+            <!-- Email -->
+            <div class="mb-4">
+                <label for="email" class="block text-xs text-neutral-500 uppercase tracking-wider mb-2">
+                    Email
+                </label>
+                <input type="email" id="email" formControlName="email" name="email"
+                    class="w-full px-3 py-2 border border-neutral-200 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-400"
+                    [class.border-red-400]="email?.invalid && email?.touched" placeholder="vous@exemple.com" />
+                @if (email?.invalid && email?.touched) {
+                @if (email?.errors?.['required']) {
+                <p class="text-red-500 text-xs mt-1">L'email est requis</p>
+                } @else if (email?.errors?.['email']) {
+                <p class="text-red-500 text-xs mt-1">L'email n'est pas valide</p>
+                }
+                }
+            </div>
+
+            <!-- Mot de passe -->
+            <div class="mb-4">
+                <label for="password" class="block text-xs text-neutral-500 uppercase tracking-wider mb-2">
+                    Mot de passe
+                </label>
+                <input type="password" id="password" formControlName="password" name="password"
+                    class="w-full px-3 py-2 border border-neutral-200 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-400"
+                    [class.border-red-400]="password?.invalid && password?.touched" placeholder="••••••••" />
+                @if (password?.invalid && password?.touched) {
+                @if (password?.errors?.['required']) {
+                <p class="text-red-500 text-xs mt-1">Le mot de passe est requis</p>
+                } @else if (password?.errors?.['minlength']) {
+                <p class="text-red-500 text-xs mt-1">Le mot de passe doit contenir au moins 6 caractères</p>
+                }
+                }
+            </div>
+
+            <!-- Confirmation mot de passe -->
+            <div class="mb-6">
+                <label for="confirmPassword" class="block text-xs text-neutral-500 uppercase tracking-wider mb-2">
+                    Confirmer le mot de passe
+                </label>
+                <input type="password" id="passwordConfirm" formControlName="passwordConfirm" name="passwordConfirm"
+                    class="w-full px-3 py-2 border border-neutral-200 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-400"
+                    [class.border-red-400]="passwordConfirm?.invalid && passwordConfirm?.touched"
+                    placeholder="••••••••" />
+                @if (passwordConfirm?.invalid && passwordConfirm?.touched) {
+                @if (passwordConfirm?.errors?.['required']) {
+                <p class="text-red-500 text-xs mt-1">La confirmation du mot de passe est requise</p>
+                } @else if (passwordConfirm?.errors?.['passwordMismatch']) {
+                <p class="text-red-500 text-xs mt-1">Les mots de passe ne correspondent pas</p>
+                }
+                }
+            </div>
+
+            <!-- Message d'erreur global -->
+            @if (error()) {
+            <p class="text-red-600 text-sm mb-4">{{ error() }}</p>
+            }
+
+            <!-- Bouton -->
+            <button type="submit" [disabled]="isLoading() || form.invalid"
+                class="w-full py-3 bg-neutral-900 text-white text-sm font-medium hover:bg-neutral-800 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors">
+                @if (isLoading()) {
+                Création du compte...
+                } @else {
+                Créer mon compte
+                }
+            </button>
+        </form>
+
+        <!-- Lien vers connexion -->
+        <div class="mt-6 text-center text-sm text-neutral-500">
+            Déjà un compte ?
+            <a routerLink="/login" class="text-neutral-900 hover:underline">Se connecter</a>
+        </div>
+    </div>
+</div>

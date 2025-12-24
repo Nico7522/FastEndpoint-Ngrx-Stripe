@@ -33,4 +33,12 @@ export class Login {
       LoginActions.login({ email: data.email ?? '', password: data.password ?? '' })
     );
   }
+
+  get email() {
+    return this.form.get('email');
+  }
+
+  get password() {
+    return this.form.get('password');
+  }
 }

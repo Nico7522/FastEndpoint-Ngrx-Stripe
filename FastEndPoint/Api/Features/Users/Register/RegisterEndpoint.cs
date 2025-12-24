@@ -9,7 +9,7 @@ public class RegisterEndpoint(ProductDbContext context) : Endpoint<RegisterReque
 {
     public override void Configure()
     {
-        Post("/api/users/register");
+        Post("/users/register");
         AllowAnonymous();
     }
 
