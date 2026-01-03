@@ -3,6 +3,8 @@ using Api.Entities;
 using Api.Shared.Security;
 using FastEndpoints;
 using FastEndpoints.Security;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Configuration;
@@ -13,11 +15,12 @@ public static class Configuration
     {
         public void RegisterServices()
         {
+            builder.Services.AddFastEndpoints();
             builder.Services.AddCors();
             builder.Services.AddDbContext<ProductDbContext>(opt => opt.UseInMemoryDatabase("Products"));
-            builder.Services.AddAuthenticationJwtBearer(s => s.SigningKey = builder.Configuration["JwtSettings:SigninKey"])
-                            .AddAuthorization()
-                            .AddFastEndpoints();
+            builder.Services.AddAuthenticationJwtBearer(s => s.SigningKey = builder.Configuration["JwtSettings:SigninKey"]);
+            builder.Services.AddAuthorization();
+
         }
 
         public void ConfigureMiddleware()

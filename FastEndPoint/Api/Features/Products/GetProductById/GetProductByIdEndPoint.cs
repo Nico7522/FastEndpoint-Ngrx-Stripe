@@ -1,5 +1,7 @@
 ﻿using Api.Database;
 using FastEndpoints;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Api.Features.Products.GetProductById;
 
@@ -7,8 +9,8 @@ public class GetProductByIdEndPoint(ProductDbContext context) : Endpoint<GetProd
 {
     public override void Configure()
     {
-        Get("/api/products/{Id}");
-        AllowAnonymous();
+        Get("/products/{Id}");
+  
     }
     public override async Task HandleAsync(GetProductByIdRequest req, CancellationToken ct)
     {

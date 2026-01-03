@@ -26,13 +26,22 @@ public class LoginEndpoint(ProductDbContext context, IConfiguration configuratio
             await Send.ErrorsAsync(400, ct);
             return;
         }
+        _ = CookieAuth.SignInAsync(u =>
+        {
+            u.Roles.Add("Admin");
+            u.Permissions.AddRange(["Create_Item", "Delete_Item"]);
+            u.Claims.Add(new("Address", "123 Street"));
+
+            u["Email"] = "abc@def.com";
+            u["Department"] = "Administration";
+        });
         var signInKey = configuration["JwtSettings:SigninKey"];
         if (signInKey is null)
         {
             await Send.ErrorsAsync(500, ct);
             return;
         }
-        
+    
         Response = await CreateTokenWith<UserTokenService>(
             user.Id.ToString(),
             o =>
