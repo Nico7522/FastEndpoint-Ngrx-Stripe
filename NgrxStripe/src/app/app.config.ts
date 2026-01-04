@@ -8,7 +8,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideStore, Store } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
-import { provideEntityData, withEffects } from '@ngrx/data';
+import { EntityDataService, provideEntityData, withEffects } from '@ngrx/data';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideNgxStripe } from 'ngx-stripe';
 import { cartReducer } from './features/cart/reducers';
@@ -19,6 +19,7 @@ import { LoginActions } from './features/login/actions/login.type';
 import { authInterceptor } from './shared/interceptors/auth-interceptor';
 import { refreshTokenInterceptor } from './shared/interceptors/refresh-token-interceptor';
 import { environment } from '../environments/environment';
+import { ProductDataService } from './features/products/services/product-data/product-data.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -45,6 +46,12 @@ export const appConfig: ApplicationConfig = {
       },
       withEffects()
     ),
+    ProductDataService,
+    provideAppInitializer(() => {
+      const entityDataService = inject(EntityDataService);
+      const productDataService = inject(ProductDataService);
+      entityDataService.registerService('Product', productDataService);
+    }),
     provideNgxStripe(environment.publicKey),
   ],
 };

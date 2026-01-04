@@ -4,9 +4,7 @@
     @if (errors$ | async; as error) {
     <div class="text-center py-20">
       <p class="text-red-600 text-sm mb-4">Une erreur est survenue lors du chargement des produits.</p>
-      <button (click)="reload()" class="text-xs text-neutral-600 hover:text-neutral-900 underline">
-        Réessayer
-      </button>
+
     </div>
     } @else if (loading$ | async) {
     <!-- Loading -->
@@ -40,6 +38,13 @@
       </article>
       }
     </div>
+
+    <!-- Pagination -->
+    @if (pagination().totalPages > 1) {
+    <app-pagination [paginationMetadata]="pagination()" [totalPagesArray]="totalPagesArray()"
+      (onNextPage)="onNextPage()" (onPreviousPage)="onPreviousPage()"
+      (onGoToPage)="onGoToPage($event)"></app-pagination>
+    }
     }
     }
     }

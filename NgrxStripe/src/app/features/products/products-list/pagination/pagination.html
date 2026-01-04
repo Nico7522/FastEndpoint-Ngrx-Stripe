@@ -1,0 +1,27 @@
+<nav class="flex items-center justify-center gap-2 mt-10">
+    <button (click)="previousPage()" [disabled]="!paginationMetadata().hasPrevious"
+        class="px-4 py-2 text-sm text-neutral-600 hover:text-neutral-900 disabled:opacity-40 disabled:cursor-not-allowed">
+        ← Précédent
+    </button>
+
+    <div class="flex items-center gap-1">
+        @for (page of totalPagesArray(); track page) {
+        <button (click)="goToPage(page)" [class.bg-neutral-900]="paginationMetadata().currentPage === page"
+            [class.text-white]="paginationMetadata().currentPage === page"
+            [class.text-neutral-600]="paginationMetadata().currentPage !== page"
+            class="w-8 h-8 text-sm rounded hover:bg-neutral-200 transition-colors">
+            {{ page }}
+        </button>
+        }
+    </div>
+
+    <button (click)="nextPage()" [disabled]="!paginationMetadata().hasNext"
+        class="px-4 py-2 text-sm text-neutral-600 hover:text-neutral-900 disabled:opacity-40 disabled:cursor-not-allowed">
+        Suivant →
+    </button>
+</nav>
+
+<p class="text-center text-xs text-neutral-400 mt-4">
+    {{ paginationMetadata().totalItems }} produit(s) • Page {{ paginationMetadata().currentPage }} sur {{
+    paginationMetadata().totalPages }}
+</p>
